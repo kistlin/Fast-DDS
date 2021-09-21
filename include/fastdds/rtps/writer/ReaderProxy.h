@@ -140,7 +140,7 @@ public:
             const SequenceNumber_t& seq_num,
             FragmentNumber_t& next_unsent_frag,
             SequenceNumber_t& gap_seq,
-            bool& need_reactivate_periodic_heartbeat) const;
+            bool& need_reactivate_periodic_heartbeat);
 
     /**
      * Mark all changes up to the one indicated by seq_num as Acknowledged.
@@ -423,6 +423,8 @@ private:
     SequenceNumber_t changes_low_mark_;
 
     bool active_ = false;
+
+    SequenceNumber_t last_gap_seq_;
 
     using ChangeIterator = ResourceLimitedVector<ChangeForReader_t, std::true_type>::iterator;
     using ChangeConstIterator = ResourceLimitedVector<ChangeForReader_t, std::true_type>::const_iterator;

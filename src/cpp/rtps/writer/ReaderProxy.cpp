@@ -168,6 +168,7 @@ void ReaderProxy::stop()
     last_acknack_count_ = 0;
     last_nackfrag_count_ = 0;
     changes_low_mark_ = SequenceNumber_t();
+    last_gap_seq_ = SequenceNumber_t();
 }
 
 void ReaderProxy::disable_timers()
@@ -269,7 +270,7 @@ bool ReaderProxy::change_is_unsent(
         const SequenceNumber_t& seq_num,
         FragmentNumber_t& next_unsent_frag,
         SequenceNumber_t& gap_seq,
-        bool& need_reactivate_periodic_heartbeat) const
+        bool& need_reactivate_periodic_heartbeat)
 {
     if (seq_num <= changes_low_mark_ || changes_for_reader_.empty())
     {
@@ -300,9 +301,10 @@ bool ReaderProxy::change_is_unsent(
                     changes_low_mark_
                     ) + 1;
 
-            if (prev != chit->getSequenceNumber())
+            if (prev != chit->getSequenceNumber() && prev != last_gap_seq_)
             {
                 gap_seq = prev;
+                last_gap_seq_ = prev;
             }
         }
     }
